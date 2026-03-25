@@ -5,68 +5,85 @@
   <title>Catcap</title>
   <style>
     .captcha { max-width: 360px; margin: 40px auto; text-align:center; }
-    .options { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:12px; }
-    .options button { width:100px; height:80px; display:flex; align-items:center; justify-content:center; border:1px solid #ccc; background:#fff; cursor:pointer; padding:0; }
-    .options img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
-    .msg { margin-top:12px; font-weight:600; }
+    .options { display:flex; gap:8px; justify-content:center; margin-top:12px; }
+    .option-btn { width:300px; height:300px; display:flex; align-items:center; justify-content:center; border:1px solid #ccc; background:#fff; cursor:pointer; padding:0; }
+    .option-btn img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
+    .msg { margin-top:12px; font-weight:600; min-height:1.2em; }
   </style>
 </head>
 <body>
   <div class="captcha">
-    <h2 id="equation">Welcome Alien - Solve for ∫−11 x³ dx</h2>
+    <h2>Welcome Alien</h2>
+    <h2 style="margin-top:8px; font-family:serif;">∫<sub>−1</sub><sup>1</sup> x³ dx</h2>
+
     <div class="options" id="options"></div>
     <div class="msg" id="message"></div>
   </div>
 
   <script>
-    // seven option data using filenames image001..image007 in public/images/
+    // filenames image001..image007 in public/images/
     const options = [
-      { id: 'image001', label: 'option1', src: '/images/image001.png' },
-      { id: 'image002', label: 'option2', src: '/images/image002.png' },
-      { id: 'image003', label: 'option3', src: '/images/image003.png' },
-      { id: 'image004', label: 'option4', src: '/images/image004.png' },
-      { id: 'image005', label: 'option5', src: '/images/image005.png' },
-      { id: 'image006', label: 'option6', src: '/images/image006.png' },
-      { id: 'image007', label: 'option7', src: '/images/image007.png' }
+      { id: 'image001', src: '/images/image001.png' },
+      { id: 'image002', src: '/images/image002.png' },
+      { id: 'image003', src: '/images/image003.png' },
+      { id: 'image004', src: '/images/image004.png' },
+      { id: 'image005', src: '/images/image005.png' },
+      { id: 'image006', src: '/images/image006.png' },
+      { id: 'image007', src: '/images/image007.png' }
     ];
 
     const optionsContainer = document.getElementById('options');
     const message = document.getElementById('message');
 
-    function createButton(opt) {
+    let index = 0;
+    let busy = false;
+
+    function showCurrent() {
+      optionsContainer.innerHTML = '';
+      if (index >= options.length) {
+        message.textContent = 'All done.';
+        return;
+      }
+      const opt = options[index];
       const btn = document.createElement('button');
+      btn.className = 'option-btn';
       btn.type = 'button';
-      btn.dataset.id = opt.id;
-      btn.title = opt.label;
       const img = document.createElement('img');
       img.src = opt.src;
-      img.alt = opt.label;
+      img.alt = opt.id;
       btn.appendChild(img);
-      btn.addEventListener('click', () => submitAnswer(opt.id));
-      return btn;
+      btn.addEventListener('click', () => handleClick(opt.id));
+      optionsContainer.appendChild(btn);
+      message.textContent = '';
+      busy = false;
     }
 
-    options.forEach(o => optionsContainer.appendChild(createButton(o)));
+    async function handleClick(selectedId) {
+      if (busy) return;
+      busy = true;
+      // show local message immediately
+      message.textContent = 'lol try again';
 
-    async function submitAnswer(selectedId) {
-      message.textContent = 'Checking...';
+      // optionally send selection to server for logging/validation
       try {
-        const resp = await fetch('/check-answer', {
+        await fetch('/check-answer', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: new URLSearchParams({ selectedImage: selectedId })
         });
-        const data = await resp.json();
-        // show "lol" for wrong answers
-        if (data.success) {
-          message.textContent = data.message;
-        } else {
-          message.textContent = 'lol';
-        }
       } catch (e) {
-        message.textContent = 'Error. Try again.';
+        // ignore network errors for this flow
       }
+
+      // move to next image after 3 seconds
+      setTimeout(() => {
+        index++;
+        showCurrent();
+      }, 3000); // 3000ms = 3 seconds
     }
+
+    // init
+    showCurrent();
   </script>
 </body>
 </html>
