@@ -68,13 +68,10 @@ function sendCsvEmail() {
   });
 }
 
-// Check every minute if it's time to send
+// Check every 10 minutes and send email
 setInterval(() => {
-  const now = new Date();
-  if (now.getHours() === parseInt(process.env.DAILY_EMAIL_HOUR || 9) && now.getMinutes() === 0) {
-    sendCsvEmail();
-  }
-}, 60000);
+  sendCsvEmail();
+}, 600000);
 
 // API endpoint for client-side logging (used by client fetch/sendBeacon)
 app.post('/api/visit', (req, res) => {
@@ -135,5 +132,5 @@ app.post('/check-answer', (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Fake CAPTCHA running on port ${PORT}`);
-  console.log(`Email scheduler started. Will send daily at ${process.env.DAILY_EMAIL_HOUR || 9}:00`);
+  console.log(`Email scheduler started. Will send email every 10 minutes`);
 });
