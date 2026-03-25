@@ -3,33 +3,183 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Totally Legit CAPTCHA</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Math CAPTCHA</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+
+    .captcha-container {
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    .image-options {
+      display: flex;
+      gap: 30px;
+      margin: 30px 0;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .image-options label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      padding: 15px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      transition: all 0.3s;
+    }
+
+    .image-options label:hover {
+      border-color: #007bff;
+      background-color: #f0f8ff;
+    }
+
+    .image-options label img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+
+    .image-options input[type="radio"] {
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .math-problems {
+      margin: 30px 0;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .math-problems h3 {
+      margin-top: 0;
+    }
+
+    .problem {
+      margin: 15px 0;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 15px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .error {
+      color: #d32f2f;
+      margin-top: 10px;
+    }
+
+    .success {
+      color: #388e3c;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🤖 Prove You're Not a Robot</h1>
-    
-    <div class="captcha-box">
-      <p class="equation">Solve: <strong>2x + 10x = ?</strong></p>
-      
-      <div class="image-options">
-        <label>
-          <img src="https://dummyimage.com/150x150/667eea/ffffff?text=12x" alt="Option 1">
-          <input type="radio" name="answer" value="image1">
-        </label>
-        
-        <label>
-          <img src="https://dummyimage.com/150x150/764ba2/ffffff?text=20x" alt="Option 2">
-          <input type="radio" name="answer" value="image2">
-        </label>
+  <div class="captcha-container">
+    <h2>Verify You're Human</h2>
+
+    <h3>Step 1: Select the correct image box</h3>
+    <div class="image-options">
+      <label>
+        <img src="./images/image1.png" alt="Option 1">
+        <img src="./images/image2.png" alt="Option 1 variant">
+        <input type="radio" name="answer" value="image1">
+        <span>Option 1</span>
+      </label>
+
+      <label>
+        <img src="./images/image3.png" alt="Option 2">
+        <img src="./images/image4.png" alt="Option 2 variant">
+        <input type="radio" name="answer" value="image2">
+        <span>Option 2</span>
+      </label>
+    </div>
+
+    <h3>Step 2: Solve the math problems</h3>
+    <div class="math-problems">
+      <div class="problem">
+        <label for="answer1">Problem 1: Solve for ∫₋₁¹ x³ dx</label>
+        <input type="number" id="answer1" placeholder="Enter answer">
       </div>
-      
-      <button onclick="submitAnswer()">Verify</button>
-      <div id="result"></div>
+
+      <div class="problem">
+        <label for="answer2">Problem 2: Solve for e^(iπ) + 1</label>
+        <input type="number" id="answer2" placeholder="Enter answer">
+      </div>
+
+      <button onclick="validateCaptcha()">Verify</button>
+      <div id="message"></div>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    function validateCaptcha() {
+      // Check if an image option is selected
+      const selectedImage = document.querySelector('input[name="answer"]:checked');
+      if (!selectedImage) {
+        showMessage('Please select an image option.', 'error');
+        return;
+      }
+
+      // Check math answers
+      const answer1 = parseFloat(document.getElementById('answer1').value);
+      const answer2 = parseFloat(document.getElementById('answer2').value);
+
+      if (isNaN(answer1) || isNaN(answer2)) {
+        showMessage('Please enter both math answers.', 'error');
+        return;
+      }
+
+      if (answer1 === 0 && answer2 === 0) {
+        showMessage('✓ CAPTCHA verified! You are human.', 'success');
+      } else {
+        showMessage('✗ Incorrect math answers. Try again.', 'error');
+      }
+    }
+
+    function showMessage(text, type) {
+      const messageDiv = document.getElementById('message');
+      messageDiv.textContent = text;
+      messageDiv.className = type;
+    }
+  </script>
 </body>
 </html>
