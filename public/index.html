@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Totally Legit CAPTCHA</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🤖 Prove You're Not a Robot</h1>
+    
+    <div class="captcha-box">
+      <p class="equation">Solve: <strong>2x + 10x = ?</strong></p>
+      
+      <div class="image-options">
+        <label>
+          <img src="https://via.placeholder.com/150?text=12x" alt="Option 1">
+          <input type="radio" name="answer" value="image1">
+        </label>
+        
+        <label>
+          <img src="https://via.placeholder.com/150?text=20x" alt="Option 2">
+          <input type="radio" name="answer" value="image2">
+        </label>
+      </div>
+      
+      <button onclick="submitAnswer()">Verify</button>
+      <div id="result"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
