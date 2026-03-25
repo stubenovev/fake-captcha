@@ -32,6 +32,13 @@ def init_db():
     except Exception as e:
         print(f"Database init error: {e}")
 
+def get_client_ip():
+    """Get the real client IP from X-Forwarded-For header or fallback to remote_addr"""
+    forwarded_for = request.headers.get('X-Forwarded-For')
+    if forwarded_for:
+        return forwarded_for.split(',')[0].strip()
+    return request.remote_addr
+
 def log_visitor(ip, user_agent, path):
     """Log a visitor to the Postgres database"""
     try:
@@ -50,13 +57,13 @@ def log_visitor(ip, user_agent, path):
 @app.route('/')
 def index():
     """Serve the fake CAPTCHA page"""
-    log_visitor(request.remote_addr, request.headers.get('User-Agent', 'Unknown'), request.path)
+    log_visitor(get_client_ip(), request.headers.get('User-Agent', 'Unknown'), request.path)
     return send_from_directory('public', 'index.html')
 
 @app.route('/check-answer', methods=['POST'])
 def check_answer():
     """Always return 'try again' (it's a joke)"""
-    log_visitor(request.remote_addr, request.headers.get('User-Agent', 'Unknown'), request.path)
+    log_visitor(get_client_ip(), request.headers.get('User-Agent', 'Unknown'), request.path)
     return jsonify({'result': 'lol try again'})
 
 @app.route('/download-visits')
