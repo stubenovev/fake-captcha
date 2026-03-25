@@ -1,0 +1,106 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  color: white;
+  margin-bottom: 30px;
+  font-size: 28px;
+}
+
+.captcha-box {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.equation {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.image-options {
+  display: flex;
+  gap: 20px;
+  margin: 20px 0;
+  justify-content: center;
+}
+
+.image-options label {
+  cursor: pointer;
+  text-align: center;
+}
+
+.image-options img {
+  width: 150px;
+  height: 150px;
+  border: 3px solid #ddd;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.image-options input[type="radio"] {
+  margin-top: 10px;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+}
+
+.image-options input[type="radio"]:checked + img {
+  border-color: #667eea;
+  transform: scale(1.05);
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #764ba2;
+}
+
+#result {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  min-height: 30px;
+}
+
+#result.success {
+  color: #28a745;
+}
+
+#result.error {
+  color: #dc3545;
+}
