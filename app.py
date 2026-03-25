@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
 import psycopg2
 from datetime import datetime
 import os
@@ -51,7 +51,7 @@ def log_visitor(ip, user_agent, path):
 def index():
     """Serve the fake CAPTCHA page"""
     log_visitor(request.remote_addr, request.headers.get('User-Agent', 'Unknown'), request.path)
-    return render_template('captcha.html')
+    return send_from_directory('public', 'index.html')
 
 @app.route('/check-answer', methods=['POST'])
 def check_answer():
