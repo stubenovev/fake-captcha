@@ -13,7 +13,7 @@
 </head>
 <body>
   <div class="captcha">
-    <h2 id="equation">2x + 10x</h2>
+    <h2 id="equation">Welcome Alien - Answer Your Personal Captcha</h2>
     <div class="options" id="options"></div>
     <div class="msg" id="message"></div>
   </div>
@@ -57,7 +57,12 @@
           body: new URLSearchParams({ selectedImage: selectedId })
         });
         const data = await resp.json();
-        message.textContent = data.message;
+        // show "lol" for wrong answers
+        if (data.success) {
+          message.textContent = data.message;
+        } else {
+          message.textContent = 'lol';
+        }
       } catch (e) {
         message.textContent = 'Error. Try again.';
       }
