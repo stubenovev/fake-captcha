@@ -2,6 +2,7 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const nodemailer = require('nodemailer');
 
 const app = express();
 app.set('trust proxy', true);
@@ -41,6 +42,39 @@ function appendVisitRow({ visited_at, ip, path: p, user_agent, client_ts }) {
     console.error('Failed to append visit row:', err);
   }
 }
+
+// Email setup for Duck.com
+const transporter = nodemailer.createTransport({
+  host: 'smtp.duck.com',
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+
+function sendCsvEmail() {
+  const csv = fs.readFileSync(CSV_PATH, 'utf8');
+  transporter.sendMail({
+    from: process.env.EMAIL_USER,
+    to: process.env.EMAIL_TO,
+    subject: 'Daily Fake CAPTCHA Visits',
+    text: 'See attached CSV',
+    attachments: [{ filename: 'visits.csv', content: csv }]
+  }, (err) => {
+    if (err) console.error('Email failed:', err);
+    else console.log('Email sent');
+  });
+}
+
+// Check every minute if it's time to send
+setInterval(() => {
+  const now = new Date();
+  if (now.getHours() === parseInt(process.env.DAILY_EMAIL_HOUR || 9) && now.getMinutes() === 0) {
+    sendCsvEmail();
+  }
+}, 60000);
 
 // API endpoint for client-side logging (used by client fetch/sendBeacon)
 app.post('/api/visit', (req, res) => {
@@ -101,4 +135,5 @@ app.post('/check-answer', (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Fake CAPTCHA running on port ${PORT}`);
+  console.log(`Email scheduler started. Will send daily at ${process.env.DAILY_EMAIL_HOUR || 9}:00`);
 });
